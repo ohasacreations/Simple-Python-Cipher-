@@ -1,103 +1,91 @@
-Modular Arithmetic-Based Numerical Cipher (Modulus 8)
-This repository contains a Python implementation of a simple, reversible numerical cipher designed for demonstration and educational purposes, specifically to illustrate the application of modular arithmetic.
+# Modular Arithmetic-Based Numerical Cipher (Modulus 8)
 
-1. Principles of Operation
-The cipher operates on a digit-by-digit basis, transforming each input digit d into an encrypted digit e within the field of modulo 8.
+This repository presents a Python implementation of a simple, reversible numerical cipher. Its primary purpose is to serve as a clean, runnable demonstration of the application of **modular arithmetic** in cryptographic principles.
 
-Input Constraints
-The cryptographic scheme is derived from an 8-point mapping table, making it optimally reversible and predictable for input digits in the range of 1 to 8. While the script processes all single-digit inputs, the defined logic directly corresponds to this specific range.
+***
 
-1.1 Encryption Function (encript)
-The transformation applies a constant shift of +5 and then utilizes the modulo 8 operation to ensure the output remains within the set {0,1,2,3,4,5,6,7}.
+## 1. Theoretical Framework
 
-The encryption formula is defined as:
+The cipher operates by transforming each digit of an input PIN independently, using a modulus of $8$.
 
-Encrypted Digit e=(d+5)mod8
-1.2 Decryption Function (decript)
-Decryption reverses the shift operation. In modular arithmetic, subtracting 5 is equivalent to adding 3 (since 3−8=−5). The function implements a piecewise solution to correctly map the encrypted digit back to its original value, compensating for the modular wrap.
+### Input Constraint
 
-Encrypted Digit e
+The cipher is designed and validated based on the $8$-point mapping derived from the original design illustration (which used digits $1$ through $8$). As such, the scheme is optimally reversible and predictable for input digits in the range of $\mathbf{1}$ to $\mathbf{8}$.
 
-Decryption Operation
+### 1.1 Encryption Function $(\text{encript})$
 
-Decrypted Digit d
+Each input digit $d$ is transformed into an encrypted digit $e$ by applying a shift of $+5$ and then the modulo $8$ operation.
 
-6 or 7
+$$\text{Encrypted Digit } e = (d + 5) \bmod 8$$
 
-e−5
+### 1.2 Decryption Function $(\text{decript})$
 
-1 or 2
+Decryption reverses the operation. Since $$-5 \equiv 3 \pmod 8$$ the inverse operation is implemented piecewise to correctly map the encrypted digit $e$ back to the original digit $d$ by compensating for the modular wrap.
 
-0 through 5
+| Encrypted Digit $e$ | Decryption Operation | Decrypted Digit $d$ |
+| :-----------------: | :------------------: | :-----------------: |
+| $6$ or $7$          | $e - 5$              | $1$ or $2$          |
+| $0$ through $5$     | $e + 3$              | $3$ through $8$     |
 
-e+3
+***
 
-3 through 8
+## 2. Usage and Execution
 
-2. Implementation
-Prerequisites
-The script requires a standard Python 3 environment.
+### Prerequisites
 
-Usage
-Save the code below into a file named pin_crypto.py.
+This script requires a standard **Python 3** environment.
 
-Execute the script from the command line:
+### Running the Cipher
 
-python pin_crypto.py
+1.  Save the code below into a file named `pin_crypto.py`.
+2.  Execute the script from your terminal:
 
-The console will prompt the user for input for both encryption and decryption tests.
+    ```bash
+    python pin_crypto.py
+    ```
 
-3. Source Code (pin_crypto.py)
+The program will prompt you for a PIN to encrypt and an encrypted PIN to decrypt.
+
+***
+
+## 3. Source Code (`pin_crypto.py`)
+
+```python
 def encript(Pin: str) -> str:
     """
     Encrypts a numerical PIN using the (digit + 5) % 8 scheme.
-    
-    Args:
-        Pin: The original PIN number as a string.
-        
-    Returns:
-        The encrypted PIN as a string.
     """
     Epin = ""
     for x in Pin:
         try:
-            # Ensure the input is treated as an integer digit
             digit = int(x)
-            
             # Apply the encryption formula: (d + 5) mod 8
             num = (digit + 5) % 8
-            
             Epin = Epin + str(num)
         except ValueError:
-            # Ignores non-digit characters for robust input handling
+            # Simple handling: ignores non-digit characters
             pass 
     return Epin
 
 def decript(Epin: str) -> str:
     """
     Decrypts an encrypted PIN using the inverse logic.
-    
-    Args:
-        Epin: The encrypted PIN number as a string.
-        
-    Returns:
-        The decrypted (original) PIN as a string.
     """
     Dpin = ""
     for x in Epin:
         try:
             digit = int(x)
             
-            # Decryption logic based on the range of the encrypted digit
+            # Inverse operation: -5 is equivalent to +3 mod 8
             if digit == 6 or digit == 7:
                 # Corresponds to subtracting 5 for lower original values
                 Dpin = Dpin + str(digit - 5)
             else:
-                # Corresponds to adding 3 (equivalent to -5 mod 8) for higher original values
+                # Corresponds to adding 3 for higher original values
                 Dpin = Dpin + str(digit + 3)
                 
         except ValueError:
-            # Ignores non-digit characters for robust input handling
+            # Simple handling: ignores non-digit characters
             pass
             
     return Dpin
@@ -107,14 +95,12 @@ def decript(Epin: str) -> str:
 if __name__ == "__main__":
     print("--- Modular PIN Cipher Demonstration ---")
     
-    # Recommend digits 1-8 to the user to align with the cipher's design
     userPin = input("Enter the Pin Number (Digits 1-8 recommended): ")
     Encripted_Pin = encript(userPin)
     print(f"\n[Encryption] Original Pin:    {userPin}")
     print(f"[Encryption] Encrypted Pin: {Encripted_Pin}")
     print("-" * 40)
 
-    # Decryption Test
     userEpin = input("Enter the Encrypted Pin Numbber: ")
     Decripted_Pin = decript(userEpin)
     print(f"\n[Decryption] Encrypted Pin: {userEpin}")
